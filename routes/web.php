@@ -9,14 +9,7 @@ Route::view('/', 'index');
  */
 
 Route::prefix('animal_kinds')->name('animal_kinds')->group(function () {
-    Route::get('/', function () {
-        return '[{
-            "kind": "cat",
-            "max_size": 25,
-            "max_age": 100,
-            "growth_factor": 1.3
-        }]';
-    })->name('');
+    Route::get('/', [App\Http\Controllers\AnimalKindController::class, 'index'])->name('index');
 });
 
 Route::prefix('animals')->name('animals')->group(function () {

@@ -4,24 +4,24 @@
             <div class="index__top">
                 <div
                     class="buttons-toggler"
-                    :class="{ 'buttons-toggler--loading': togglerLoading }"
+                    :class="{ 'buttons-toggler--loading': loadingAnimalKinds }"
                 >
                     <button
                         class="buttons-toggler__btn"
                         type="Button"
                         title="Открыть"
-                        @click="loadPets"
+                        @click="loadAnimalKinds"
                     ></button>
                     <div class="buttons-toggler__inner">
                         <div 
                             class="buttons-toggler__content"
-                            :class="{ 'buttons-toggler__content--show': petsLoaded }"
+                            :class="{ 'buttons-toggler__content--show': loadedAnimalKinds }"
                         >
-                            <button class="add-pet-btn" type="button" v-for="pet in pets" :key="pet.name">
+                            <button class="add-pet-btn" type="button" v-for="animalKind in animalKinds" :key="animalKind.kind">
                                 <img
                                     class="add-pet-btn__icon"
-                                    :src="`/images/pets/${pet.kind}.svg`"
-                                    :alt="`${pet.name} (${pet.kind})`"
+                                    :src="`/images/pets/${animalKind.kind}.svg`"
+                                    :alt="`${animalKind.kind}`"
                                 />
                             </button>
                         </div>
@@ -29,12 +29,12 @@
                 </div>
             </div>
             <div class="index__content">
-                <div class="pets" v-if="pets.length">
-                    <div class="pet" v-for="pet in pets" :key="pet.name">
+                <div class="pets" v-if="animals.length">
+                    <div class="pet" v-for="animal in animals" :key="animal.name">
                         <img
                             class="pet__icon"
-                            :src="`/images/pets/${pet.kind}.svg`"
-                            :alt="`${pet.name} (${pet.kind})`"
+                            :src="`/images/pets/${animal.kind}.svg`"
+                            :alt="`${animal.name} (${animal.kind})`"
                         />
                     </div>
                 </div>
@@ -47,55 +47,33 @@
 export default {
     data() {
         return {
-            togglerLoading: false,
-            petsLoaded: false,
+            loadingAnimalKinds: false,
+            loadedAnimalKinds: false,
             raito: 1,
-            pets: []
+            animalKinds: [],
+            animals: []
         };
     },
     methods: {
-        async loadPets(e) {
-            this.togglerLoading = true;
-            this.petsLoaded = false;
+        async loadAnimalKinds(e) {
+            this.loadingAnimalKinds = true;
+            this.loadedAnimalKinds = false;
 
-            let dur = (this.pets.length) ? 600 : 0;
+            let dur = (this.animals.length) ? 600 : 0;
 
-            setTimeout(() => {
-                setTimeout(() => {
-                    this.pets = [
-                        {
-                            "kind": "cat",
-                            "max_size": 15,
-                            "max_age": 30,
-                            "growth_factor": 3,
-                        },
-                        {
-                            "kind": "dog",
-                            "max_size": 50,
-                            "max_age": 30,
-                            "growth_factor": 4
-                        },
-                        {
-                            "kind": "bird",
-                            "max_size": 1,
-                            "max_age": 5,
-                            "growth_factor": 5
-                        },
-                        {
-                            "kind": "mi",
-                            "max_size": 160,
-                            "max_age": 20,
-                            "growth_factor": 5
-                        },
-                    ];
-                    
+            setTimeout(async () => {
+                try {
+                    let response = await axios.get(`/animal_kinds`);
+                    this.animalKinds = response.data;
+                        
                     setTimeout(() => {
-                        this.togglerLoading = false;
-                        this.petsLoaded = true;
+                        this.loadingAnimalKinds = false;
+                        this.loadedAnimalKinds = true;
                     }, 100)
-                }, 1000);
+                } catch (error) {
+                    alert('Произошла ошибка. Попробуйте позднее');
+                }
             }, dur)
-
         },
     },
 };
