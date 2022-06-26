@@ -19514,7 +19514,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                       "kind": "cat",
                       "max_size": 15,
                       "max_age": 30,
-                      "growth_facor": 3
+                      "growth_factor": 3
                     }, {
                       "kind": "dog",
                       "max_size": 50,
