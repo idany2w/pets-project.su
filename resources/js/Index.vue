@@ -40,6 +40,7 @@
                             :src="`/images/pets/${animal.kind}.svg`"
                             :alt="`${animal.name} (${animal.kind})`"
                         />
+                        <p class="pet__name">{{ animal.name }} ({{ animal.age }})</p>
                     </div>
                 </div>
             </div>
@@ -80,7 +81,7 @@ export default {
             this.loadingAnimalKinds = true;
             this.loadedAnimalKinds = false;
 
-            let dur = (this.animals.length) ? 600 : 0;
+            let dur = (this.animalKinds.length) ? 600 : 0;
 
             setTimeout(async () => {
                 try {
@@ -288,6 +289,12 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.pet__name{
+    width: 100%;
+    text-align: center;
 }
 
 .add-pet-popup{
