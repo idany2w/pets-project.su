@@ -9,6 +9,9 @@ class AnimalKind extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $primaryKey = 'kind';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'kind',

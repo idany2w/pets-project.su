@@ -14,15 +14,14 @@ class CreateAnimalsTable extends Migration
     public function up()
     {
         Schema::create('animals', function (Blueprint $table) {
-            $table->id();
             $table->timestamps();
 
-            $table->string('name');
-            $table->unsignedBigInteger('animal_kinds_id');
+            $table->string('name')->primary();
+            $table->string('kind');
             $table->float('age');
             $table->float('size');
             
-            $table->foreign('animal_kinds_id')->references('id')->on('animal_kinds')->onDelete('cascade');
+            $table->foreign('kind')->references('kind')->on('animal_kinds')->onDelete('cascade');
         });
     }
 

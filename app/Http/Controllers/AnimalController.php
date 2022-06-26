@@ -4,82 +4,80 @@ namespace App\Http\Controllers;
 
 use App\Models\Animal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 
 class AnimalController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $json = \App\Models\Animal::with('AnimalKind')->get()->transform(function($item){
+            return [
+                'kind' => $item->AnimalKind->kind,
+                'name' => $item->name,
+                'age' => $item->age,
+                'size' => $item->size,
+            ];
+        });
+        return response()->json($json);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'kind' => 'required|exists:animal_kinds,kind'
+        ]);
+
+        if ($validator->fails()) {
+            $json = [
+                "error" => $validator->errors()->all(),
+                "data" => "error"
+            ];
+
+            return response()->json($json, 422);
+        }
+
+        $animal = Animal::create([
+            'name' => $request->name,
+            'kind' => $request->kind,
+            'age' => 1,
+            'size' => 1,
+        ]);
+
+        if($animal){
+            $json = [
+                "error" => null,
+                "data" => "ok",
+            ];
+            return response()->json($json);
+        } else{
+            $json = [
+                "error" => true,
+                "data" => "error",
+            ];
+            return response()->json($json, 500);
+        }
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Animal  $animal
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Animal $animal)
+    public function show($name)
     {
-        //
+        return '{
+            "name": "Simon",
+            "kind": "cat",
+            "age": 1,
+            "size": 1
+        }';
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Animal  $animal
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Animal $animal)
+    
+    public function age($name)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Animal  $animal
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Animal $animal)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Animal  $animal
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Animal $animal)
-    {
-        //
+        return '{
+            "name": "Simon",
+            "kind": "cat",
+            "age": 1,
+            "size": 1
+        }';
     }
 }

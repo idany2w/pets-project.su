@@ -13,35 +13,11 @@ Route::prefix('animal_kinds')->name('animal_kinds')->group(function () {
 });
 
 Route::prefix('animals')->name('animals')->group(function () {
-    Route::get('/', function () {
-        return '[{
-            "kind": "cat",
-            "name": "Simon",
-            "age": 1,
-            "size": 1
-        }]';
-    })->name('');
+    Route::get('/', [App\Http\Controllers\AnimalController::class, 'index'])->name('index');
 
-    Route::get('/{$name}', function ($user) {
-        return '{
-            "name": "Simon",
-            "kind": "cat",
-            "age": 1,
-            "size": 1
-        }';
-    })->name('.single');
+    Route::get('/{$name}', [App\Http\Controllers\AnimalController::class, 'show'])->name('.show');
 
-    Route::post('/', function ($name, $kind) {
-        return '{
-            "error": null
-            "data": "ok"
-        }';
-    })->name('.create');
+    Route::post('/', [App\Http\Controllers\AnimalController::class, 'store'])->name('.store');
 
-    Route::post('/age', function ($name) {
-        return '{
-            "error": null
-            "data": "ok"
-        }';
-    })->name('.age');
+    Route::post('/age', [App\Http\Controllers\AnimalController::class, 'age'])->name('.age');
 });

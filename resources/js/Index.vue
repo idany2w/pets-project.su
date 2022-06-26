@@ -22,6 +22,7 @@
                                     class="add-pet-btn__icon"
                                     :src="`/images/pets/${animalKind.kind}.svg`"
                                     :alt="`${animalKind.kind}`"
+                                    @click="showPopup(animalKind.kind)"
                                 />
                             </button>
                         </div>
@@ -33,11 +34,21 @@
                     <div class="pet" v-for="animal in animals" :key="animal.name">
                         <img
                             class="pet__icon"
+                            :style="{
+                                width: calculateAnimalSize(animal)
+                            }"
                             :src="`/images/pets/${animal.kind}.svg`"
                             :alt="`${animal.name} (${animal.kind})`"
                         />
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="add-pet-popup" v-if="isShowPopup" @click="hidePopup()">
+            <div class="add-pet-popup__inner" @click.stop="">
+                <p class="add-pet-popup__title">Введите имя питомца</p>
+                <input type="text" class="add-pet-popup__input" v-model="petModel.name">
+                <button type="button" class="add-pet-popup__btn" @click="storePet">Создать</button>
             </div>
         </div>
     </div>
@@ -47,11 +58,21 @@
 export default {
     data() {
         return {
+            animalKinds: [],
             loadingAnimalKinds: false,
             loadedAnimalKinds: false,
-            raito: 1,
-            animalKinds: [],
-            animals: []
+
+            animals: [],
+            loadingAnimals: false,
+
+            raito: 50,
+            maxSize: 0,
+
+            isShowPopup: false,
+            petModel: {
+                name: '',
+                kind: '',
+            }
         };
     },
     methods: {
@@ -65,17 +86,73 @@ export default {
                 try {
                     let response = await axios.get(`/animal_kinds`);
                     this.animalKinds = response.data;
-                        
-                    setTimeout(() => {
-                        this.loadingAnimalKinds = false;
-                        this.loadedAnimalKinds = true;
-                    }, 100)
                 } catch (error) {
                     alert('Произошла ошибка. Попробуйте позднее');
                 }
+                        
+                setTimeout(() => {
+                    this.loadingAnimalKinds = false;
+                    this.loadedAnimalKinds = true;
+                }, 100)
             }, dur)
         },
+        async loadAnimals(e) {
+            this.loadingAnimals = true;
+            try {
+                let response = await axios.get(`/animals`);
+                this.animals = response.data;
+            } catch (error) {
+                alert('Произошла ошибка. Попробуйте позднее');
+            }
+
+            this.loadingAnimals = false;
+        },
+        calculateAnimalSize(animal) {
+            if(animal.size * this.raito > this.maxSize){
+                this.raito = this.maxSize / animal.size;
+            }
+            return (animal.size * this.raito) + 'px';
+        },
+        showPopup(kind){
+            this.petModel.kind = kind;
+            this.isShowPopup = true;
+        },
+        hidePopup(){
+            this.isShowPopup = false;
+        },
+        async storePet() {
+            const name = this.petModel.name;
+            const kind = this.petModel.kind;
+
+            this.petModel.name = null;
+            this.petModel.kind = null;
+
+            let isError = false;
+
+            try {
+                let response = await axios.post(`/animals`,{
+                    'name': name,
+                    'kind': kind,
+                });
+
+                if(response.data.data === "ok"){
+                    this.loadAnimals()
+                } else[
+                    isError = true
+                ]
+            } catch (error) {
+                isError = true
+            }
+            
+            this.isShowPopup = false;
+            
+            if(isError) alert('Произошла ошибка. Попробуйте позднее');
+        }
     },
+    created() {
+        this.maxSize = window.innerWidth > 1050 ? 1050 : window.innerWidth - 50
+        this.loadAnimals()
+    }
 };
 </script>
 
@@ -211,5 +288,51 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.add-pet-popup{
+    position:fixed;
+    z-index: 5;
+    background-color: rgba(0, 0, 0, .5);
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.add-pet-popup__inner{
+    border-radius: 24px;
+    padding: 24px;
+    background-color: #fff;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    max-width: 300px;
+    width: 90%;
+}
+.add-pet-popup__title{
+    font: 18px sans-serif;
+    font-weight: bold;
+    flex-grow: 1;
+    flex-basis: 100%;
+    margin: 0
+}
+
+.add-pet-popup__input{
+    flex-basis: calc(100% - 70px);
+    margin: 0;
+    padding: 0;
+}
+.add-pet-popup__btn{
+    flex-basis: 60px;
+    background-color: #3E2723;
+    color: #fff;
+    padding: 4px;
 }
 </style>

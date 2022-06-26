@@ -41,6 +41,6 @@ class AnimalKindSeeder extends Seeder
                 "max_age" => 20,
                 "growth_factor" => 5
             ],
-        ],['kind', 'max_size', 'max_age', 'growth_factor'], ['id']);
+        ],['kind', 'max_size', 'max_age', 'growth_factor'], ['kind']);
     }
 }

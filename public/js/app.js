@@ -19489,11 +19489,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      animalKinds: [],
       loadingAnimalKinds: false,
       loadedAnimalKinds: false,
-      raito: 1,
-      animalKinds: [],
-      animals: []
+      animals: [],
+      loadingAnimals: false,
+      raito: 50,
+      maxSize: 0,
+      isShowPopup: false,
+      petModel: {
+        name: '',
+        kind: ''
+      }
     };
   },
   methods: {
@@ -19522,24 +19529,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                         case 3:
                           response = _context.sent;
                           _this.animalKinds = response.data;
+                          _context.next = 10;
+                          break;
+
+                        case 7:
+                          _context.prev = 7;
+                          _context.t0 = _context["catch"](0);
+                          alert('Произошла ошибка. Попробуйте позднее');
+
+                        case 10:
                           setTimeout(function () {
                             _this.loadingAnimalKinds = false;
                             _this.loadedAnimalKinds = true;
                           }, 100);
-                          _context.next = 11;
-                          break;
-
-                        case 8:
-                          _context.prev = 8;
-                          _context.t0 = _context["catch"](0);
-                          alert('Произошла ошибка. Попробуйте позднее');
 
                         case 11:
                         case "end":
                           return _context.stop();
                       }
                     }
-                  }, _callee, null, [[0, 8]]);
+                  }, _callee, null, [[0, 7]]);
                 })), dur);
 
               case 4:
@@ -19549,7 +19558,109 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee2);
       }))();
+    },
+    loadAnimals: function loadAnimals(e) {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        var response;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _this2.loadingAnimals = true;
+                _context3.prev = 1;
+                _context3.next = 4;
+                return axios.get("/animals");
+
+              case 4:
+                response = _context3.sent;
+                _this2.animals = response.data;
+                _context3.next = 11;
+                break;
+
+              case 8:
+                _context3.prev = 8;
+                _context3.t0 = _context3["catch"](1);
+                alert('Произошла ошибка. Попробуйте позднее');
+
+              case 11:
+                _this2.loadingAnimals = false;
+
+              case 12:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, null, [[1, 8]]);
+      }))();
+    },
+    calculateAnimalSize: function calculateAnimalSize(animal) {
+      if (animal.size * this.raito > this.maxSize) {
+        this.raito = this.maxSize / animal.size;
+      }
+
+      return animal.size * this.raito + 'px';
+    },
+    showPopup: function showPopup(kind) {
+      this.petModel.kind = kind;
+      this.isShowPopup = true;
+    },
+    hidePopup: function hidePopup() {
+      this.isShowPopup = false;
+    },
+    storePet: function storePet() {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+        var name, kind, isError, response;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                name = _this3.petModel.name;
+                kind = _this3.petModel.kind;
+                _this3.petModel.name = null;
+                _this3.petModel.kind = null;
+                isError = false;
+                _context4.prev = 5;
+                _context4.next = 8;
+                return axios.post("/animals", {
+                  'name': name,
+                  'kind': kind
+                });
+
+              case 8:
+                response = _context4.sent;
+
+                if (response.data.data === "ok") {
+                  _this3.loadAnimals();
+                } else [isError = true];
+
+                _context4.next = 15;
+                break;
+
+              case 12:
+                _context4.prev = 12;
+                _context4.t0 = _context4["catch"](5);
+                isError = true;
+
+              case 15:
+                _this3.isShowPopup = false;
+                if (isError) alert('Произошла ошибка. Попробуйте позднее');
+
+              case 17:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, null, [[5, 12]]);
+      }))();
     }
+  },
+  created: function created() {
+    this.maxSize = window.innerWidth > 1050 ? 1050 : window.innerWidth - 50;
+    this.loadAnimals();
   }
 });
 
@@ -19580,7 +19691,7 @@ var _hoisted_3 = {
 var _hoisted_4 = {
   "class": "buttons-toggler__inner"
 };
-var _hoisted_5 = ["src", "alt"];
+var _hoisted_5 = ["src", "alt", "onClick"];
 var _hoisted_6 = {
   "class": "index__content"
 };
@@ -19589,6 +19700,13 @@ var _hoisted_7 = {
   "class": "pets"
 };
 var _hoisted_8 = ["src", "alt"];
+
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+  "class": "add-pet-popup__title"
+}, "Введите имя питомца", -1
+/* HOISTED */
+);
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["buttons-toggler", {
@@ -19613,7 +19731,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
       "class": "add-pet-btn__icon",
       src: "/images/pets/".concat(animalKind.kind, ".svg"),
-      alt: "".concat(animalKind.kind)
+      alt: "".concat(animalKind.kind),
+      onClick: function onClick($event) {
+        return $options.showPopup(animalKind.kind);
+      }
     }, null, 8
     /* PROPS */
     , _hoisted_5)]);
@@ -19629,14 +19750,40 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       key: animal.name
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
       "class": "pet__icon",
+      style: (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeStyle)({
+        width: $options.calculateAnimalSize(animal)
+      }),
       src: "/images/pets/".concat(animal.kind, ".svg"),
       alt: "".concat(animal.name, " (").concat(animal.kind, ")")
-    }, null, 8
-    /* PROPS */
+    }, null, 12
+    /* STYLE, PROPS */
     , _hoisted_8)]);
   }), 128
   /* KEYED_FRAGMENT */
-  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])]);
+  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), $data.isShowPopup ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
+    key: 0,
+    "class": "add-pet-popup",
+    onClick: _cache[4] || (_cache[4] = function ($event) {
+      return $options.hidePopup();
+    })
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "add-pet-popup__inner",
+    onClick: _cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {}, ["stop"]))
+  }, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "text",
+    "class": "add-pet-popup__input",
+    "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+      return $data.petModel.name = $event;
+    })
+  }, null, 512
+  /* NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.petModel.name]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    type: "button",
+    "class": "add-pet-popup__btn",
+    onClick: _cache[2] || (_cache[2] = function () {
+      return $options.storePet && $options.storePet.apply($options, arguments);
+    })
+  }, "Создать")])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
 }
 
 /***/ }),
@@ -19708,7 +19855,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.index {\n    min-height: 100vh;\n    padding: 50px 0;\n    display: flex;\n    flex-direction: column;\n    gap: 50px\n}\n.index__content{\n    flex-shrink: 0;\n    flex-grow: 1;\n    display: flex;\n    flex-direction: column;\n}\n.buttons-toggler{\n    transition: opacity 0.3s;\n    display: flex;\n    overflow: hidden;\n}\n.buttons-toggler__btn {\n    width: 48px;\n    height: 48px;\n    border-radius: 48px;\n    cursor: pointer;\n    position: relative;\n    z-index: 1;\n\n    display: flex;\n    align-items: center;\n    justify-content: center;\n\n    opacity: 1;\n    background-color: #3e2723;\n    \n    margin-right: -48px;\n}\n.buttons-toggler__btn::before {\n    content: \"\";\n    display: block;\n    width: 24px;\n    height: 24px;\n    background-image: url(\"data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z' fill='white'/%3E%3C/svg%3E%0A\");\n    pointer-events: none;\n}\n.buttons-toggler__inner{\n    margin-left: 20px;\n    overflow: hidden;\n    height: 100%;\n}\n.buttons-toggler__content{\n    display: flex;\n    align-items: center;\n    gap: 6px;\n    padding: 4px 12px 4px 46px;\n    border-radius: 0px 8px 8px 0px;\n\n    background: #D7CCC8;\n\n    transition: transform .3s, opacity .6s;\n\n    transform: translateX(-50%);\n    opacity: 0;\n    pointer-events: none;\n    height: 100%;\n}\n.buttons-toggler__content--show{\n    transform: translateX(0%);\n    opacity: 1;\n    pointer-events: auto;\n}\n.buttons-toggler__content > *{\n    width: 40px;\n    transform: translateY(50%);\n    transition: transform .3s, opacity .3s\n}\n.buttons-toggler__content--show > *{\n    transform: translateY(0%);\n    transition-delay: 5s;\n}\n.buttons-toggler__content > *:nth-child(1){transition-delay: .05s;}\n.buttons-toggler__content > *:nth-child(2){transition-delay: .10s;}\n.buttons-toggler__content > *:nth-child(3){transition-delay: .15s;}\n.buttons-toggler__content > *:nth-child(4){transition-delay: .20s;}\n.buttons-toggler--loading {\n    pointer-events: none;\n    opacity: 0.75;\n}\n.buttons-toggler--loading .buttons-toggler__btn::before {\n    -webkit-animation-name: spin;\n            animation-name: spin;\n    -webkit-animation-duration: 1000ms;\n            animation-duration: 1000ms;\n    -webkit-animation-iteration-count: infinite;\n            animation-iteration-count: infinite;\n    -webkit-animation-timing-function: linear;\n            animation-timing-function: linear;\n}\n.add-pet-btn{\n    width: 40px;\n    height: 40px;\n    border-radius: 40px;\n    background-color: #fff;\n    border: 2px solid #3E2723;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n.add-pet-btn__icon{\n    width: 70%;\n    height: 70%;\n    -o-object-fit: contain;\n       object-fit: contain;\n    -o-object-position: center;\n       object-position: center;\n}\n.pets{\n    display: flex;\n    align-items: center;\n    flex-wrap: wrap;\n    gap: 30px;\n    flex-grow: 1;\n}\n.pets > *{\n    flex-grow: 1;\n    flex-shrink: 0;\n}\n.pet{\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.index {\n    min-height: 100vh;\n    padding: 50px 0;\n    display: flex;\n    flex-direction: column;\n    gap: 50px\n}\n.index__content{\n    flex-shrink: 0;\n    flex-grow: 1;\n    display: flex;\n    flex-direction: column;\n}\n.buttons-toggler{\n    transition: opacity 0.3s;\n    display: flex;\n    overflow: hidden;\n}\n.buttons-toggler__btn {\n    width: 48px;\n    height: 48px;\n    border-radius: 48px;\n    cursor: pointer;\n    position: relative;\n    z-index: 1;\n\n    display: flex;\n    align-items: center;\n    justify-content: center;\n\n    opacity: 1;\n    background-color: #3e2723;\n    \n    margin-right: -48px;\n}\n.buttons-toggler__btn::before {\n    content: \"\";\n    display: block;\n    width: 24px;\n    height: 24px;\n    background-image: url(\"data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z' fill='white'/%3E%3C/svg%3E%0A\");\n    pointer-events: none;\n}\n.buttons-toggler__inner{\n    margin-left: 20px;\n    overflow: hidden;\n    height: 100%;\n}\n.buttons-toggler__content{\n    display: flex;\n    align-items: center;\n    gap: 6px;\n    padding: 4px 12px 4px 46px;\n    border-radius: 0px 8px 8px 0px;\n\n    background: #D7CCC8;\n\n    transition: transform .3s, opacity .6s;\n\n    transform: translateX(-50%);\n    opacity: 0;\n    pointer-events: none;\n    height: 100%;\n}\n.buttons-toggler__content--show{\n    transform: translateX(0%);\n    opacity: 1;\n    pointer-events: auto;\n}\n.buttons-toggler__content > *{\n    width: 40px;\n    transform: translateY(50%);\n    transition: transform .3s, opacity .3s\n}\n.buttons-toggler__content--show > *{\n    transform: translateY(0%);\n    transition-delay: 5s;\n}\n.buttons-toggler__content > *:nth-child(1){transition-delay: .05s;}\n.buttons-toggler__content > *:nth-child(2){transition-delay: .10s;}\n.buttons-toggler__content > *:nth-child(3){transition-delay: .15s;}\n.buttons-toggler__content > *:nth-child(4){transition-delay: .20s;}\n.buttons-toggler--loading {\n    pointer-events: none;\n    opacity: 0.75;\n}\n.buttons-toggler--loading .buttons-toggler__btn::before {\n    -webkit-animation-name: spin;\n            animation-name: spin;\n    -webkit-animation-duration: 1000ms;\n            animation-duration: 1000ms;\n    -webkit-animation-iteration-count: infinite;\n            animation-iteration-count: infinite;\n    -webkit-animation-timing-function: linear;\n            animation-timing-function: linear;\n}\n.add-pet-btn{\n    width: 40px;\n    height: 40px;\n    border-radius: 40px;\n    background-color: #fff;\n    border: 2px solid #3E2723;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n.add-pet-btn__icon{\n    width: 70%;\n    height: 70%;\n    -o-object-fit: contain;\n       object-fit: contain;\n    -o-object-position: center;\n       object-position: center;\n}\n.pets{\n    display: flex;\n    align-items: center;\n    flex-wrap: wrap;\n    gap: 30px;\n    flex-grow: 1;\n}\n.pets > *{\n    flex-grow: 1;\n    flex-shrink: 0;\n}\n.pet{\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n.add-pet-popup{\n    position:fixed;\n    z-index: 5;\n    background-color: rgba(0, 0, 0, .5);\n    left: 0;\n    top: 0;\n    width: 100%;\n    height: 100%;\n\n    display: flex;\n    overflow-y: auto;\n    overflow-x: hidden;\n}\n.add-pet-popup__inner{\n    border-radius: 24px;\n    padding: 24px;\n    background-color: #fff;\n    margin: auto;\n    display: flex;\n    flex-wrap: wrap;\n    gap: 10px;\n\n    max-width: 300px;\n    width: 90%;\n}\n.add-pet-popup__title{\n    font: 18px sans-serif;\n    font-weight: bold;\n    flex-grow: 1;\n    flex-basis: 100%;\n    margin: 0\n}\n.add-pet-popup__input{\n    flex-basis: calc(100% - 70px);\n    margin: 0;\n    padding: 0;\n}\n.add-pet-popup__btn{\n    flex-basis: 60px;\n    background-color: #3E2723;\n    color: #fff;\n    padding: 4px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
