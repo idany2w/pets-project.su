@@ -26,7 +26,17 @@ class Animal extends Model
     
     public function age()
     {
-        dd($this);
-        return $this;
+        $next_size = $this->size * (1+$this->AnimalKind->growth_factor/10);
+        $next_age = ++$this->age;
+
+        if($next_size > $this->AnimalKind->max_size || $next_age > $this->AnimalKind->max_age){
+            return false;
+        } else{
+            $this->update([
+                'age' => $next_age,
+                'size' => $next_size,
+            ]);
+            return true;
+        }
     }
 }

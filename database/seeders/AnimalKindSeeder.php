@@ -19,27 +19,27 @@ class AnimalKindSeeder extends Seeder
         AnimalKind::upsert([
             [
                 "kind" => "cat",
-                "max_size" => 15,
-                "max_age" => 30,
-                "growth_factor" => 3,
+                "max_size" => 10,
+                "max_age" => 10,
+                "growth_factor" => 1,
             ],
             [
                 "kind" => "dog",
-                "max_size" => 50,
-                "max_age" => 30,
-                "growth_factor" => 4
+                "max_size" => 15,
+                "max_age" => 15,
+                "growth_factor" => 2
             ],
             [
                 "kind" => "bird",
-                "max_size" => 1,
+                "max_size" => 5,
                 "max_age" => 5,
-                "growth_factor" => 5
+                "growth_factor" => 3
             ],
             [
                 "kind" => "mi",
-                "max_size" => 160,
+                "max_size" => 20,
                 "max_age" => 20,
-                "growth_factor" => 5
+                "growth_factor" => 4
             ],
         ],['kind', 'max_size', 'max_age', 'growth_factor'], ['kind']);
     }

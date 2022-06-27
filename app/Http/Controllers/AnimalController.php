@@ -77,11 +77,28 @@ class AnimalController extends Controller
     
     public function age(Request $request)
     {
-        return '{
-            "name": "Simon",
-            "kind": "cat",
-            "age": 1,
-            "size": 1
-        }';
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|exists:animals,name',
+        ]);
+
+        if ($validator->fails()) {
+            $json = [
+                "error" => $validator->errors()->all(),
+                "data" => "error"
+            ];
+
+            return response()->json($json, 422);
+        }
+
+        $animal = Animal::with('AnimalKind')->find($request->name);
+
+        $animal->age();
+
+        $json = [
+            "error" => null,
+            "data" => "ok"
+        ];
+
+        return response()->json($json);
     }
 }
