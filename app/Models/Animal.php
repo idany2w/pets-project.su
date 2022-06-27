@@ -23,4 +23,10 @@ class Animal extends Model
     {
         return $this->belongsTo(AnimalKind::class, 'kind', 'kind');
     }
+    
+    public function age()
+    {
+        dd($this);
+        return $this;
+    }
 }

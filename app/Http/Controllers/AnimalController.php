@@ -63,15 +63,19 @@ class AnimalController extends Controller
 
     public function show($name)
     {
-        return '{
-            "name": "Simon",
-            "kind": "cat",
-            "age": 1,
-            "size": 1
-        }';
+        $animal = Animal::with('AnimalKind')->find($name);
+
+        $json = [
+            'name' => $animal->name,
+            'kind' => $animal->AnimalKind->kind,
+            'age' => $animal->age,
+            'size' => $animal->size,
+        ];
+
+        return response()->json($json);
     }
     
-    public function age($name)
+    public function age(Request $request)
     {
         return '{
             "name": "Simon",
