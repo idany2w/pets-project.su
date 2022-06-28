@@ -38,8 +38,8 @@ class AnimalKindSeeder extends Seeder
             [
                 "kind" => "mi",
                 "max_size" => 20,
-                "max_age" => 20,
-                "growth_factor" => 4
+                "max_age" => 50,
+                "growth_factor" => 3
             ],
         ],['kind', 'max_size', 'max_age', 'growth_factor'], ['kind']);
     }

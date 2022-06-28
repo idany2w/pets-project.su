@@ -19559,7 +19559,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee2);
       }))();
     },
-    loadAnimals: function loadAnimals(e) {
+    loadAnimals: function loadAnimals() {
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
@@ -19669,7 +19669,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee4, null, [[5, 12]]);
       }))();
     },
-    agePet: function agePet(name) {
+    agePet: function agePet(animal) {
       var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
@@ -19682,14 +19682,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _context5.prev = 1;
                 _context5.next = 4;
                 return axios.post("/animals/age", {
-                  'name': name
+                  'name': animal.name
                 });
 
               case 4:
                 response = _context5.sent;
 
                 if (response.data.data === "ok") {
-                  _this4.loadAnimals();
+                  _this4.loadAnimal(animal.name);
                 } else {
                   isError = true;
                 }
@@ -19712,11 +19712,62 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee5, null, [[1, 8]]);
       }))();
+    },
+    loadAnimal: function loadAnimal(name) {
+      var _this5 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+        var response, newAnimal;
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _context6.prev = 0;
+                _context6.next = 3;
+                return axios.get("/animals/".concat(name));
+
+              case 3:
+                response = _context6.sent;
+                newAnimal = response.data;
+                Object.assign(_this5.animals.find(function (e) {
+                  return e.name == newAnimal.name;
+                }), newAnimal);
+                _context6.next = 11;
+                break;
+
+              case 8:
+                _context6.prev = 8;
+                _context6.t0 = _context6["catch"](0);
+                alert('Произошла ошибка. Попробуйте позднее');
+
+              case 11:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6, null, [[0, 8]]);
+      }))();
     }
   },
   created: function created() {
+    var _this6 = this;
+
     this.maxSize = window.innerWidth > 1050 ? 1050 : window.innerWidth - 100;
     this.loadAnimals();
+    this.loadAnimalKinds();
+    setInterval(function () {
+      if (_this6.animals && _this6.animals.length) {
+        _this6.animals.forEach(function (e) {
+          var kind = _this6.animalKinds.find(function (item) {
+            return item.kind == e.kind;
+          });
+
+          if (kind.max_size > e.size && kind.max_age > e.age) {
+            _this6.agePet(e);
+          }
+        });
+      }
+    }, 1000);
   }
 });
 
@@ -19809,7 +19860,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       key: animal.name
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
       onClick: function onClick($event) {
-        return $options.agePet(animal.name);
+        return $options.agePet(animal);
       },
       "class": "pet__icon",
       style: (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeStyle)({

@@ -186,12 +186,16 @@ button{
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: 5px;
 }
 .pet__name{
     width: 100%;
     text-align: center;
+}
+.pet__icon{
+    transition: width .25s;
 }
 
 .add-pet-popup{

@@ -33,7 +33,7 @@
                 <div class="pets" v-if="animals.length">
                     <div class="pet" v-for="animal in animals" :key="animal.name">
                         <img
-                            @click="agePet(animal.name)"
+                            @click="agePet(animal)"
                             class="pet__icon"
                             :style="{
                                 width: calculateAnimalSize(animal)
@@ -98,7 +98,7 @@ export default {
                 }, 100)
             }, dur)
         },
-        async loadAnimals(e) {
+        async loadAnimals() {
             this.loadingAnimals = true;
             try {
                 let response = await axios.get(`/animals`);
@@ -159,15 +159,15 @@ export default {
             
             if(isError) alert('Произошла ошибка. Попробуйте позднее');
         },
-        async agePet(name) {
+        async agePet(animal) {
             let isError = false;
             try {
                 let response = await axios.post(`/animals/age`,{
-                    'name': name,
+                    'name': animal.name,
                 });
 
                 if(response.data.data === "ok"){
-                    this.loadAnimals()
+                    this.loadAnimal(animal.name);
                 } else{
                     isError = true
                 }
@@ -176,11 +176,33 @@ export default {
             }
             
             if(isError) alert('Произошла ошибка. Попробуйте позднее');
-        }
+        },
+        async loadAnimal(name) {
+            try {
+                let response = await axios.get(`/animals/${name}`);
+                let newAnimal = response.data;
+                Object.assign(this.animals.find(e =>  e.name == newAnimal.name), newAnimal)
+            } catch (error) {
+                alert('Произошла ошибка. Попробуйте позднее');
+            }
+        },
     },
     created() {
         this.maxSize = window.innerWidth > 1050 ? 1050 : window.innerWidth - 100
-        this.loadAnimals()
+        this.loadAnimals();
+        this.loadAnimalKinds()
+
+        setInterval(() => {
+            if(this.animals && this.animals.length){
+                this.animals.forEach(e => {
+                    let kind = this.animalKinds.find(item => item.kind == e.kind)
+
+                    if(kind.max_size > e.size && kind.max_age > e.age){
+                        this.agePet(e)
+                    }
+                })
+            }
+        }, 1000)
     }
 };
 </script>
